@@ -23,8 +23,8 @@ export class ProductService {
       src: 'assets/images/products/yellowMellow.png',
     },
     {
-      name: 'Green Nish',
-      src: 'assets/images/products/greenNish.png',
+      name: 'Greenish',
+      src: 'assets/images/products/greenish.png',
     },
     {
       name: 'Sunrise Beet',
