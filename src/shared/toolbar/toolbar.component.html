@@ -21,7 +21,7 @@
         aria-label="Example icon-button with menu icon"
       >
         <mat-icon
-          matBadge="15"
+          [matBadge]="toolbarService.amountInShoppingCart$ | async"
           matBadgeColor="warn"
           aria-hidden="false"
           aria-label="Example home icon"

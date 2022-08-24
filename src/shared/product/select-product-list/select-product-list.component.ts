@@ -1,17 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  SelectProductComponent,
-} from '../select-product/select-product.component';
+import { SelectProductComponent } from '../select-product/select-product.component';
 import { FormArray, FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   combineLatestWith,
   debounceTime,
   map,
   shareReplay,
+  takeUntil,
 } from 'rxjs/operators';
-import { COLD_PRESSED_PRODUCTS, SelectProduct } from '../select-product/select-product';
+import {
+  COLD_PRESSED_PRODUCTS,
+  SelectProduct,
+} from '../select-product/select-product';
 import { PromotionDiscount } from './select-product-list';
+import { ToolbarService } from 'src/shared/toolbar/toolbar.service';
+import { AsyncSubject } from 'rxjs';
 
 @Component({
   selector: 'app-select-product-list',
@@ -20,8 +24,11 @@ import { PromotionDiscount } from './select-product-list';
   standalone: true,
   imports: [CommonModule, SelectProductComponent, ReactiveFormsModule],
 })
-export class SelectProductListComponent implements OnInit {
+export class SelectProductListComponent implements OnInit, OnDestroy {
+  onDestroy$ = new AsyncSubject<void>();
   coldPressedProducts = COLD_PRESSED_PRODUCTS;
+
+  toolbarService = inject(ToolbarService);
 
   formArray = new FormArray<FormControl<SelectProduct | null>>(
     this.coldPressedProducts.map(() => new FormControl(null))
@@ -74,7 +81,23 @@ export class SelectProductListComponent implements OnInit {
     shareReplay(1)
   );
 
-  constructor() {}
+  constructor() {
+    this.formArray.valueChanges
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((products) => {
+        let sumAmount = 0;
+        for (const product of products) {
+          if (product) {
+            sumAmount += product.amount;
+          }
+        }
+        this.toolbarService.setBadgeShoppingCart(sumAmount);
+      });
+  }
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
   ngOnInit() {}
 
