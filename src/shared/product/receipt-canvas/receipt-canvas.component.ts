@@ -271,7 +271,9 @@ export class ReceiptCanvasComponent implements OnInit, OnDestroy {
         anchor.href = data;
         anchor.download = 'receipt.png';
         anchor.click();
-        anchor.remove();
+        setTimeout(() => {
+          anchor.remove();
+        });
       })
     );
   }

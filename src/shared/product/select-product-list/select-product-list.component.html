@@ -9,10 +9,18 @@
     />
   </mat-form-field>
 
-  <mat-form-field class="example-full-width" appearance="fill">
+  <mat-form-field
+    class="example-full-width"
+    appearance="fill"
+    (click)="toggle._open($event)"
+  >
     <mat-label>Order date</mat-label>
     <input [(ngModel)]="orderDate" matInput [matDatepicker]="picker" />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker-toggle
+      #toggle
+      matSuffix
+      [for]="picker"
+    ></mat-datepicker-toggle>
     <mat-datepicker touchUi #picker></mat-datepicker>
   </mat-form-field>
 
