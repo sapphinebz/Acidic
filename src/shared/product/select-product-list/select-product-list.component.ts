@@ -199,6 +199,7 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
         receiptHeight,
         ''
       );
+      receiptHeight = this.receiptComponent.calNewline(receiptHeight);
     }
 
     products.forEach((product) => {
@@ -244,6 +245,7 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
       this.receiptComponent.writeText(
         `orderDate: ${this.orderDate?.toLocaleDateString() ?? ''}`
       );
+      this.receiptComponent.newline();
     }
 
     products.forEach((product) => {
