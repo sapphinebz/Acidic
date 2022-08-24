@@ -205,10 +205,12 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
       if (product && product.amount > 0) {
         receiptHeight = this.receiptComponent.calWriteNormalText(
           receiptHeight,
-          `${product.name} x${product.amount} x${product.price} =${product.sumPrice}`
+          `${product.name} (${product.amount}qt x @฿${product.price}) ${product.sumPrice}`
         );
       }
     });
+
+    receiptHeight = this.receiptComponent.calNewline(receiptHeight);
 
     receiptHeight = this.receiptComponent.calWriteNormalText(
       receiptHeight,
@@ -247,15 +249,23 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     products.forEach((product) => {
       if (product && product.amount > 0) {
         this.receiptComponent.writeText(
-          `${product.name} x${product.amount} x${product.price} =${product.sumPrice}`
+          `${product.name} (${product.amount}qt x @฿${product.price}) ${product.sumPrice}`
         );
       }
     });
+
+    this.receiptComponent.newline();
+
+    this.receiptComponent.writeText(`subTotal: ฿${this.subTotal}`);
+
+    this.receiptComponent.writeText(`discount: ฿${this.discount}`);
+
+    this.receiptComponent.writeText(`total: ฿${this.total}`);
 
     this.receiptComponent.drawQrCode();
 
     this.receiptComponent.writeReceiptDate();
 
-    this.receiptComponent.download();
+    // this.receiptComponent.download();
   }
 }
