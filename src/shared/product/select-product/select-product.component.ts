@@ -53,7 +53,14 @@ export class SelectProductComponent
     this.onDestroy$.complete();
   }
 
-  writeValue(obj: any): void {}
+  writeValue(value: SelectProduct | null): void {
+    if (value === null) {
+      this.amount$.next(0);
+    } else {
+      this.amount$.next(value.amount);
+    }
+  }
+
   registerOnChange(onModelChange: any): void {
     combineLatest({
       amount: this.amount$,
@@ -64,11 +71,14 @@ export class SelectProductComponent
         const modelState: SelectProduct = {
           ...state,
           price: this.product.price,
+          name: this.product.name,
         };
         onModelChange(modelState);
       });
   }
+
   registerOnTouched(fn: any): void {}
+
   setDisabledState?(isDisabled: boolean): void {}
 
   addProduct(event: MouseEvent | TouchEvent) {

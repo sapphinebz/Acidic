@@ -16,13 +16,21 @@ import {
 import { PromotionDiscount } from './select-product-list';
 import { ToolbarService } from 'src/shared/toolbar/toolbar.service';
 import { AsyncSubject } from 'rxjs';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-select-product-list',
   templateUrl: './select-product-list.component.html',
   styleUrls: ['./select-product-list.component.scss'],
   standalone: true,
-  imports: [CommonModule, SelectProductComponent, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    SelectProductComponent,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatButtonModule,
+  ],
 })
 export class SelectProductListComponent implements OnInit, OnDestroy {
   onDestroy$ = new AsyncSubject<void>();
@@ -40,7 +48,7 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     map((products) =>
       products.reduce((sum, product) => {
         if (product) {
-          sum += product.sumPrice;
+          sum += product.sumPrice ?? 0;
         }
         return sum;
       }, 0)
@@ -117,14 +125,26 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
       }
 
       if (minPrice === undefined) {
-        minPrice = product.price;
+        minPrice = product.price ?? 0;
       } else {
-        minPrice = Math.min(minPrice, product.price);
+        minPrice = Math.min(minPrice, product.price ?? 0);
       }
     }
     return {
       discount: min * minPrice,
       name: 'buy1Set-Free1',
     };
+  }
+
+  resetProductSelection(event: MouseEvent | TouchEvent) {
+    event.preventDefault();
+
+    this.formArray.reset();
+
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    });
   }
 }

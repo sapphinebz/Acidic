@@ -5,16 +5,17 @@ import { SUMMER_ROOT_SRC } from './images/summerRoot';
 import { SUNRISE_BEET_SRC } from './images/sunriseBeet';
 import { YELLOW_MELLOW_SRC } from './images/yellowMellow';
 
-export interface SelectProduct {
-  amount: number;
-  sumPrice: number;
-  price: number;
-}
-
 export interface ColdPressed {
   name: string;
   src: string;
   price: number;
+}
+
+export interface SelectProduct {
+  name: string;
+  amount: number;
+  sumPrice?: number;
+  price?: number;
 }
 
 export const COLD_PRESSED_PRODUCTS: ColdPressed[] = [
