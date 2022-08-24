@@ -1,0 +1,22 @@
+<div class="_select-product-list_container">
+  <app-select-product
+    *ngFor="let product of coldPressedProducts; let index = index"
+    [product]="product"
+    [formControl]="controls[index]"
+  ></app-select-product>
+  <div class="_app-head-font">
+    SubTotal: {{ subTotal$ | async | number: "1.0" }} ฿
+  </div>
+  <div class="_app-head-font">
+    Discount: {{ discount$ | async | number: "1.0" }} ฿
+    <span
+      class="_select-product-list_promotion-name"
+      *ngIf="promotionNames$ | async as promotions"
+    >
+      ({{ promotionNames$ | async }})
+    </span>
+  </div>
+  <div class="_app-head-font">
+    Total: {{ total$ | async | number: "1.0" }} ฿
+  </div>
+</div>

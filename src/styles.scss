@@ -1,4 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+:root {
+  --background-hover: rgba(239, 68, 68, 0.04);
+  --border-color: #ef4444;
+
+  --head-font-size: 1.17em;
+  --head-font-weight: bold;
+
+  --padding: 0.5rem;
+
+  --pick-theme-color: #ef4444;
+}
+
+._app-head-font {
+  padding: var(--padding);
+  font-size: var(--head-font-size);
+  font-weight: var(--head-font-weight);
+}

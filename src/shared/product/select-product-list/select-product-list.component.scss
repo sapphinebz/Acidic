@@ -1,0 +1,9 @@
+._select-product-list_container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.2em;
+}
+
+._select-product-list_promotion-name {
+  color: var(--pick-theme-color);
+}
