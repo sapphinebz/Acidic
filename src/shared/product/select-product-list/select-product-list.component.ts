@@ -195,9 +195,9 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
       );
     }
     if (this.orderDate) {
-      receiptHeight = this.receiptComponent.calWriteHeadText(
+      receiptHeight = this.receiptComponent.calWriteNormalText(
         receiptHeight,
-        this.orderDate?.toLocaleDateString() ?? ''
+        ''
       );
     }
 
@@ -241,8 +241,8 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
       this.receiptComponent.writeHeadText(this.customerName);
     }
     if (this.orderDate) {
-      this.receiptComponent.writeHeadText(
-        this.orderDate?.toLocaleDateString() ?? ''
+      this.receiptComponent.writeText(
+        `orderDate: ${this.orderDate?.toLocaleDateString() ?? ''}`
       );
     }
 

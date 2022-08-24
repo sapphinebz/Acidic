@@ -14,7 +14,6 @@ import {
   Subject,
 } from 'rxjs';
 import { switchMap, takeUntil, tap, take } from 'rxjs/operators';
-import { qrPaymentImage } from './qrPaymentImage';
 
 interface WriteTextOption {
   text: string;
@@ -38,6 +37,9 @@ export class ReceiptCanvasComponent implements OnInit, OnDestroy {
     }
   }
 
+  @ViewChild('qrCodePayment', { read: ElementRef })
+  qrCodePaymentRef!: ElementRef<HTMLImageElement>;
+
   onLoadedCanvasElement$ = new ReplaySubject<HTMLCanvasElement>(1);
   onWriteText$ = new ReplaySubject<WriteTextOption>(1);
 
@@ -58,6 +60,7 @@ export class ReceiptCanvasComponent implements OnInit, OnDestroy {
     combineLatest({ canvas: this.onLoadedCanvasElement$, height: this.height$ })
       .pipe(
         switchMap(({ canvas, height }) => {
+          const qrPaymentImage = this.qrCodePaymentRef.nativeElement;
           canvas.width = qrPaymentImage.width + 32;
           canvas.height = height;
           canvas.style.backgroundColor = 'white';
@@ -121,6 +124,7 @@ export class ReceiptCanvasComponent implements OnInit, OnDestroy {
   ) {
     const ctx = canvas.getContext('2d')!;
     ctx.fillStyle = 'white';
+    const qrPaymentImage = this.qrCodePaymentRef.nativeElement;
 
     const maxWidthScreen = qrPaymentImage.width + 32;
     ctx.fillRect(option.x, option.y, maxWidthScreen, option.height);
@@ -163,6 +167,8 @@ export class ReceiptCanvasComponent implements OnInit, OnDestroy {
 
   calDrawQrCode(topOffset: number) {
     const newlineMarginTop = 20;
+    const qrPaymentImage = this.qrCodePaymentRef.nativeElement;
+
     const backgroundHeight = newlineMarginTop + qrPaymentImage.height + 16;
     return topOffset + backgroundHeight;
   }
@@ -237,6 +243,7 @@ export class ReceiptCanvasComponent implements OnInit, OnDestroy {
     return this.onDrawQrCode$.pipe(
       tap(() => {
         const newlineMarginTop = 20;
+        const qrPaymentImage = this.qrCodePaymentRef.nativeElement;
 
         const qrImageHeight = qrPaymentImage.height + 16;
         const backgroundHeight = newlineMarginTop + qrImageHeight;
