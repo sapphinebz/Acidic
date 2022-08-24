@@ -71,11 +71,13 @@ export class SelectProductComponent
   registerOnTouched(fn: any): void {}
   setDisabledState?(isDisabled: boolean): void {}
 
-  addProduct() {
+  addProduct(event: MouseEvent | TouchEvent) {
+    event.preventDefault();
     this.amount$.next(this.amount$.value + 1);
   }
 
-  removeProduct() {
+  removeProduct(event: MouseEvent | TouchEvent) {
+    event.preventDefault();
     const currentAmount = this.amount$.value;
     if (currentAmount !== 0) {
       this.amount$.next(this.amount$.value - 1);
