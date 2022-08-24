@@ -14,3 +14,11 @@
     text-align: center;
   }
 }
+:host ::ng-deep.mat-form-field-label,
+:host ::ng-deep.mat-focus-indicator.mat-icon-button.mat-button-base {
+  color: #c2185b;
+}
+
+::ng-deep.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: rgb(194 23 91 / 5%);
+}

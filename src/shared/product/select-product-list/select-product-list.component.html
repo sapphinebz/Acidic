@@ -1,4 +1,21 @@
 <div class="_select-product-list_container">
+  <mat-form-field appearance="fill">
+    <mat-label>Customer Name</mat-label>
+    <input
+      type="text"
+      [(ngModel)]="customerName"
+      matInput
+      placeholder="Tentolo"
+    />
+  </mat-form-field>
+
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Order date</mat-label>
+    <input [(ngModel)]="orderDate" matInput [matDatepicker]="picker" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker touchUi #picker></mat-datepicker>
+  </mat-form-field>
+
   <app-select-product
     *ngFor="let product of coldPressedProducts; let index = index"
     [product]="product"
@@ -22,11 +39,23 @@
   <div class="_select-product-list_reset-container">
     <button
       mat-mini-fab
+      (click)="writeReceipt($event)"
+      color="primary"
+      aria-label="icon button with a restart icon"
+    >
+      <mat-icon>file_download</mat-icon>
+    </button>
+    &nbsp;
+    <button
+      mat-mini-fab
       (click)="resetProductSelection($event)"
       color="primary"
       aria-label="icon button with a restart icon"
     >
       <mat-icon>restart_alt</mat-icon>
     </button>
+  </div>
+  <div style="display: none">
+    <app-receipt-canvas></app-receipt-canvas>
   </div>
 </div>

@@ -17,7 +17,9 @@ if (environment.production) {
 //   .catch((err) => console.error(err));
 
 bootstrapApplication(AppComponent, {
-  providers: [importProvidersFrom(RouterModule.forRoot(routes), BrowserAnimationsModule)],
+  providers: [
+    importProvidersFrom(RouterModule.forRoot(routes), BrowserAnimationsModule),
+  ],
 }).catch((err) => {
   console.error(err);
 });

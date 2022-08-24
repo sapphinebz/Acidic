@@ -1,11 +1,17 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SelectProductComponent } from '../select-product/select-product.component';
-import { FormArray, FormControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray,
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import {
   combineLatestWith,
   debounceTime,
   map,
+  tap,
   shareReplay,
   takeUntil,
 } from 'rxjs/operators';
@@ -18,6 +24,11 @@ import { ToolbarService } from 'src/shared/toolbar/toolbar.service';
 import { AsyncSubject } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { ReceiptCanvasComponent } from '../receipt-canvas/receipt-canvas.component';
 
 @Component({
   selector: 'app-select-product-list',
@@ -30,9 +41,22 @@ import { MatButtonModule } from '@angular/material/button';
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    ReceiptCanvasComponent,
+    FormsModule,
   ],
 })
 export class SelectProductListComponent implements OnInit, OnDestroy {
+  @ViewChild(ReceiptCanvasComponent, { read: ReceiptCanvasComponent })
+  receiptComponent!: ReceiptCanvasComponent;
+
+  customerName: string = '';
+
+  orderDate: Date | null = null;
+
   onDestroy$ = new AsyncSubject<void>();
   coldPressedProducts = COLD_PRESSED_PRODUCTS;
 
@@ -44,6 +68,7 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
 
   controls = this.formArray.controls as FormControl[];
 
+  subTotal!: number;
   subTotal$ = this.formArray.valueChanges.pipe(
     map((products) =>
       products.reduce((sum, product) => {
@@ -53,6 +78,9 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
         return sum;
       }, 0)
     ),
+    tap((value) => {
+      this.subTotal = value;
+    }),
     shareReplay(1)
   );
 
@@ -73,6 +101,7 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     shareReplay(1)
   );
 
+  discount!: number;
   discount$ = this.promotionDiscount$.pipe(
     map((promotionDiscounts) => {
       return promotionDiscounts.reduce(
@@ -80,12 +109,19 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
         0
       );
     }),
+    tap((value) => {
+      this.discount = value;
+    }),
     shareReplay(1)
   );
 
+  total!: number;
   total$ = this.subTotal$.pipe(
     combineLatestWith(this.discount$),
     map(([subTotalPrice, discount]) => subTotalPrice - discount),
+    tap((value) => {
+      this.total = value;
+    }),
     shareReplay(1)
   );
 
@@ -146,5 +182,80 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
       left: 0,
       behavior: 'smooth',
     });
+  }
+
+  writeReceipt(event: MouseEvent | TouchEvent) {
+    event.preventDefault();
+    let receiptHeight = 0;
+    const products = this.formArray.value;
+    if (this.customerName) {
+      receiptHeight = this.receiptComponent.calWriteHeadText(
+        receiptHeight,
+        this.customerName
+      );
+    }
+    if (this.orderDate) {
+      receiptHeight = this.receiptComponent.calWriteHeadText(
+        receiptHeight,
+        this.orderDate?.toLocaleDateString() ?? ''
+      );
+    }
+
+    products.forEach((product) => {
+      if (product && product.amount > 0) {
+        receiptHeight = this.receiptComponent.calWriteNormalText(
+          receiptHeight,
+          `${product.name} x${product.amount} x${product.price} =${product.sumPrice}`
+        );
+      }
+    });
+
+    receiptHeight = this.receiptComponent.calWriteNormalText(
+      receiptHeight,
+      `subTotal: ฿${this.subTotal}`
+    );
+
+    receiptHeight = this.receiptComponent.calWriteNormalText(
+      receiptHeight,
+      `discount: ฿${this.discount}`
+    );
+
+    receiptHeight = this.receiptComponent.calWriteNormalText(
+      receiptHeight,
+      `total: ฿${this.total}`
+    );
+
+    receiptHeight = this.receiptComponent.calDrawQrCode(receiptHeight);
+    receiptHeight = this.receiptComponent.calWriteNormalText(
+      receiptHeight,
+      'DD/MM/YYYY'
+    );
+
+    this.receiptComponent.height$.next(receiptHeight);
+
+    this.receiptComponent.clearReceipt();
+
+    if (this.customerName) {
+      this.receiptComponent.writeHeadText(this.customerName);
+    }
+    if (this.orderDate) {
+      this.receiptComponent.writeHeadText(
+        this.orderDate?.toLocaleDateString() ?? ''
+      );
+    }
+
+    products.forEach((product) => {
+      if (product && product.amount > 0) {
+        this.receiptComponent.writeText(
+          `${product.name} x${product.amount} x${product.price} =${product.sumPrice}`
+        );
+      }
+    });
+
+    this.receiptComponent.drawQrCode();
+
+    this.receiptComponent.writeReceiptDate();
+
+    this.receiptComponent.download();
   }
 }
