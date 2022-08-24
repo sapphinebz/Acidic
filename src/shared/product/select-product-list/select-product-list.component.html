@@ -19,12 +19,12 @@
   <div class="_app-head-font">
     Total: {{ total$ | async | number: "1.0" }} ฿
   </div>
-  <div>
+  <div class="_select-product-list_reset-container">
     <button
       mat-mini-fab
       (click)="resetProductSelection($event)"
       color="primary"
-      aria-label="icon button with a remove icon"
+      aria-label="icon button with a restart icon"
     >
       <mat-icon>restart_alt</mat-icon>
     </button>

@@ -7,3 +7,10 @@
 ._select-product-list_promotion-name {
   color: var(--pick-theme-color);
 }
+
+._select-product-list_reset-container {
+  text-align: left;
+  @media only screen and (max-width: 600px) {
+    text-align: center;
+  }
+}
