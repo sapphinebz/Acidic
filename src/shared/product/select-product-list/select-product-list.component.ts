@@ -257,7 +257,7 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     }
     if (this.orderDate) {
       this.receiptComponent.writeText(
-        `orderDate: ${this.orderDate?.toLocaleDateString() ?? ''}`
+        `orderDate: ${this.orderDate?.toLocaleDateString('th-TH') ?? ''}`
       );
       this.receiptComponent.newline();
     }

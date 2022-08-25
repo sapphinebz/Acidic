@@ -132,7 +132,7 @@ export class ReceiptCanvasComponent implements OnInit, OnDestroy {
   }
 
   writeReceiptDate() {
-    const receiptDate = new Date().toLocaleDateString();
+    const receiptDate = new Date().toLocaleDateString('th-TH');
     this.writeText(`receipt date: ${receiptDate}`);
   }
 
