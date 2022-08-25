@@ -24,6 +24,26 @@
     <mat-datepicker touchUi #picker></mat-datepicker>
   </mat-form-field>
 
+  <div class="_select-product-list_filter-container">
+    <button
+      mat-icon-button
+      (click)="openDialogFilter($event)"
+      color="primary"
+      aria-label="icon button with a print receipt icon"
+    >
+      <mat-icon>filter_alt</mat-icon>
+    </button>
+    &nbsp;
+    <button
+      style="display: none"
+      mat-icon-button
+      color="primary"
+      aria-label="icon button with a print receipt icon"
+    >
+      <mat-icon>filter_alt_off</mat-icon>
+    </button>
+  </div>
+
   <app-select-product
     *ngFor="let product of coldPressedProducts; let index = index"
     [product]="product"

@@ -36,7 +36,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ReceiptCanvasComponent } from '../receipt-canvas/receipt-canvas.component';
-
+import { MatDialogModule } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
+import { FilterIngredientComponent } from '../filter-ingredient/filter-ingredient.component';
 @Component({
   selector: 'app-select-product-list',
   templateUrl: './select-product-list.component.html',
@@ -54,6 +60,7 @@ import { ReceiptCanvasComponent } from '../receipt-canvas/receipt-canvas.compone
     MatNativeDateModule,
     ReceiptCanvasComponent,
     FormsModule,
+    MatDialogModule,
   ],
 })
 export class SelectProductListComponent implements OnInit, OnDestroy {
@@ -70,7 +77,7 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
   receiptImageSrc = '';
 
   onDestroy$ = new AsyncSubject<void>();
-  coldPressedProducts = COLD_PRESSED_PRODUCTS;
+  coldPressedProducts = COLD_PRESSED_PRODUCTS.sort((a, b) => a.price - b.price);
 
   toolbarService = inject(ToolbarService);
 
@@ -136,6 +143,8 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     }),
     shareReplay(1)
   );
+
+  dialog = inject(MatDialog);
 
   constructor() {
     this.formArray.valueChanges
@@ -294,5 +303,16 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
       '';
 
     // this.downloadEl.nativeElement.click();
+  }
+
+  openDialogFilter(event: TouchEvent | MouseEvent) {
+    event.preventDefault();
+
+    const dialogRef = this.dialog.open(FilterIngredientComponent, {
+      width: '250px',
+      data: {
+        products: this.coldPressedProducts,
+      },
+    });
   }
 }

@@ -8,6 +8,10 @@
   color: var(--pick-theme-color);
 }
 
+._select-product-list_filter-container {
+  text-align: left;
+}
+
 ._select-product-list_reset-container {
   text-align: left;
   @media only screen and (max-width: 600px) {
