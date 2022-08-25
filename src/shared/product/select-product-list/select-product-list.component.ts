@@ -191,6 +191,9 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
 
     this.receiptComponent.clearCanvas();
 
+    this.customerName = '';
+    this.orderDate = null;
+
     this.receiptImageSrc = '';
 
     window.scrollTo({
