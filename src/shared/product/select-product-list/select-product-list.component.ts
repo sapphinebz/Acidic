@@ -265,5 +265,9 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     this.receiptComponent.writeReceiptDate();
 
     // this.receiptComponent.download();
+
+    this.receiptComponent.canvasEl?.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+    });
   }
 }

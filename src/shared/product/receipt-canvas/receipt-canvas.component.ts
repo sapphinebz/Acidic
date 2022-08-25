@@ -8,12 +8,21 @@ import {
 } from '@angular/core';
 import {
   AsyncSubject,
+  BehaviorSubject,
   combineLatest,
   merge,
   ReplaySubject,
   Subject,
 } from 'rxjs';
-import { switchMap, takeUntil, tap, take } from 'rxjs/operators';
+import {
+  switchMap,
+  takeUntil,
+  tap,
+  take,
+  filter,
+  map,
+  shareReplay,
+} from 'rxjs/operators';
 
 interface WriteTextOption {
   text: string;
@@ -30,17 +39,26 @@ interface WriteTextOption {
 })
 export class ReceiptCanvasComponent implements OnInit, OnDestroy {
   @ViewChild('canvasEl', { read: ElementRef }) set canvasEl(
-    el: ElementRef<HTMLCanvasElement>
+    el: ElementRef<HTMLCanvasElement> | null
   ) {
     if (el) {
-      this.onLoadedCanvasElement$.next(el.nativeElement);
+      this.canvasEl$.next(el);
     }
+  }
+
+  get canvasEl() {
+    return this.canvasEl$.value;
   }
 
   @ViewChild('qrCodePayment', { read: ElementRef })
   qrCodePaymentRef!: ElementRef<HTMLImageElement>;
 
-  onLoadedCanvasElement$ = new ReplaySubject<HTMLCanvasElement>(1);
+  canvasEl$ = new BehaviorSubject<ElementRef<HTMLCanvasElement> | null>(null);
+  onLoadedCanvasElement$ = this.canvasEl$.pipe(
+    filter((el): el is ElementRef<HTMLCanvasElement> => el !== null),
+    map((ref) => ref.nativeElement),
+    shareReplay(1)
+  );
   onWriteText$ = new ReplaySubject<WriteTextOption>(1);
 
   onDrawQrCode$ = new ReplaySubject<void>(1);
