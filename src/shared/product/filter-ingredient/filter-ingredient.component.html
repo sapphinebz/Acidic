@@ -1,9 +1,13 @@
 <section class="example-section">
   <h3>Ingredients</h3>
-  <div *ngFor="let ingredient of ingredients$ | async">
-    <mat-checkbox [value]="ingredient" class="example-margin">{{
-      ingredient
-    }}</mat-checkbox>
+  <div *ngFor="let ingredient of ingredients">
+    <mat-checkbox
+      [value]="ingredient.name"
+      (change)="tickChange()"
+      [(ngModel)]="ingredient.checked"
+      class="example-margin"
+      >{{ ingredient.name }}</mat-checkbox
+    >
   </div>
 </section>
 <button mat-flat-button color="primary" (click)="applyFilter()">Apply</button>

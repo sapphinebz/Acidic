@@ -1,4 +1,4 @@
-import { SelectProduct } from "../select-product/select-product";
+import { SelectProduct } from '../select-product/select-product';
 
 export interface PromotionDiscount {
   discount: number;
@@ -6,3 +6,8 @@ export interface PromotionDiscount {
 }
 
 export type PromotionFn = (products: SelectProduct[]) => PromotionDiscount;
+
+export interface IngredientSelection {
+  name: string;
+  checked: boolean;
+}

@@ -31,6 +31,7 @@ export class SelectProductComponent
   implements OnInit, OnDestroy, ControlValueAccessor
 {
   @Input() product!: ColdPressed;
+  @Input() highlight = false;
   amount$ = new BehaviorSubject<number>(0);
   onDestroy$ = new AsyncSubject<void>();
   sumPrice$ = new ReplaySubject<number>(1);

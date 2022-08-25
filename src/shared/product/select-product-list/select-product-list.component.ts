@@ -23,12 +23,13 @@ import {
   takeUntil,
 } from 'rxjs/operators';
 import {
+  ColdPressed,
   COLD_PRESSED_PRODUCTS,
   SelectProduct,
 } from '../select-product/select-product';
-import { PromotionDiscount } from './select-product-list';
+import { IngredientSelection, PromotionDiscount } from './select-product-list';
 import { ToolbarService } from 'src/shared/toolbar/toolbar.service';
-import { AsyncSubject } from 'rxjs';
+import { AsyncSubject, BehaviorSubject, Subject } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -43,6 +44,8 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { FilterIngredientComponent } from '../filter-ingredient/filter-ingredient.component';
+import { MatChipsModule } from '@angular/material/chips';
+import { HasIngredientPipe } from '../has-ingredient.pipe';
 @Component({
   selector: 'app-select-product-list',
   templateUrl: './select-product-list.component.html',
@@ -59,8 +62,10 @@ import { FilterIngredientComponent } from '../filter-ingredient/filter-ingredien
     MatDatepickerModule,
     MatNativeDateModule,
     ReceiptCanvasComponent,
+    HasIngredientPipe,
     FormsModule,
     MatDialogModule,
+    MatChipsModule,
   ],
 })
 export class SelectProductListComponent implements OnInit, OnDestroy {
@@ -79,7 +84,15 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
   onDestroy$ = new AsyncSubject<void>();
   coldPressedProducts = COLD_PRESSED_PRODUCTS.sort((a, b) => a.price - b.price);
 
+  ingredientSelections$ = new BehaviorSubject<IngredientSelection[]>(
+    this.distinctIngredients(this.coldPressedProducts)
+  );
+
+  checkedIngredients: IngredientSelection[] = [];
+
   toolbarService = inject(ToolbarService);
+
+  filterIngredientForm = new FormControl(null);
 
   formArray = new FormArray<FormControl<SelectProduct | null>>(
     this.coldPressedProducts.map(() => new FormControl(null))
@@ -164,7 +177,15 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.ingredientSelections$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((checkList) => {
+        this.checkedIngredients = checkList.filter(
+          (item) => item.checked === true
+        );
+      });
+  }
 
   promotionBuy1SetFree1(products: (SelectProduct | null)[]): PromotionDiscount {
     let min!: number;
@@ -311,8 +332,43 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(FilterIngredientComponent, {
       width: '250px',
       data: {
-        products: this.coldPressedProducts,
+        ingredients$: this.ingredientSelections$,
       },
     });
+  }
+
+  distinctIngredients(products: ColdPressed[]) {
+    const mixIngredients = products.reduce(
+      (ingredients, product) => [...ingredients, ...product.ingredients],
+      [] as string[]
+    );
+
+    return this.distinctArray(mixIngredients).map(
+      (ingredient) =>
+        ({ name: ingredient, checked: false } as IngredientSelection)
+    );
+  }
+
+  distinctArray(array: string[]): string[] {
+    return array.filter((value, index, self) => {
+      return self.indexOf(value) === index;
+    });
+  }
+
+  uncheckIngredient(item: IngredientSelection) {
+    const ingredient = this.ingredientSelections$.value.find(
+      (i) => i.name === item.name
+    );
+    if (ingredient) {
+      ingredient.checked = false;
+      this.ingredientSelections$.next(this.ingredientSelections$.value);
+    }
+  }
+
+  clearIngredientSelection() {
+    this.ingredientSelections$.value.forEach(
+      (ingre) => (ingre.checked = false)
+    );
+    this.ingredientSelections$.next(this.ingredientSelections$.value);
   }
 }

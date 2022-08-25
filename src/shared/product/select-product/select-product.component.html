@@ -1,4 +1,7 @@
-<div class="_select-product_product-select-row">
+<div
+  class="_select-product_product-select-row"
+  [class._select-product_highlight]="highlight"
+>
   <div class="_select-product_cold-pressed-button" (click)="addProduct($event)">
     <img alt="logo" [src]="product.src" style="width: 3rem" />
     <div style="white-space: nowrap">{{ product.name }}</div>
@@ -7,21 +10,6 @@
   <div>x {{ amount$ | async | number: "1.0" }}</div>
   <div>= {{ sumPrice$ | async | number: "1.0" }} ฿</div>
   <div>
-    <!-- <button (click)="removeProduct()" type="button">
-      <mat-icon
-        aria-hidden="false"
-        aria-label="delete product"
-        fontIcon="delete"
-      ></mat-icon>
-    </button> -->
-    <!-- <button 
-      (click)="addProduct()"
-      mat-mini-fab
-      color="primary"
-      aria-label="icon button with a plus icon"
-    >
-      <mat-icon>add</mat-icon>
-    </button> -->
     <button
       (click)="removeProduct($event)"
       mat-mini-fab

@@ -10,6 +10,9 @@
 
 ._select-product-list_filter-container {
   text-align: left;
+  display: flex;
+  place-items: center;
+  flex-wrap: wrap;
 }
 
 ._select-product-list_reset-container {

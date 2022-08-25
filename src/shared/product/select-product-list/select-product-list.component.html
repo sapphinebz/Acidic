@@ -24,7 +24,7 @@
     <mat-datepicker touchUi #picker></mat-datepicker>
   </mat-form-field>
 
-  <div class="_select-product-list_filter-container" style="display: none">
+  <div class="_select-product-list_filter-container">
     <button
       mat-icon-button
       (click)="openDialogFilter($event)"
@@ -42,10 +42,26 @@
     >
       <mat-icon>filter_alt_off</mat-icon>
     </button>
+    <mat-chip-list aria-label="Ingredient selection">
+      <mat-chip
+        (click)="clearIngredientSelection()"
+        [selected]="checkedIngredients.length === 0"
+        >all
+      </mat-chip>
+      <mat-chip
+        *ngFor="let checkedIngredient of checkedIngredients"
+        [selected]="true"
+        >{{ checkedIngredient.name }}
+        <button matChipRemove (click)="uncheckIngredient(checkedIngredient)">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+    </mat-chip-list>
   </div>
 
   <app-select-product
     *ngFor="let product of coldPressedProducts; let index = index"
+    [highlight]="product | hasIngredient: checkedIngredients"
     [product]="product"
     [formControl]="controls[index]"
   ></app-select-product>
