@@ -45,11 +45,23 @@
     Total: {{ total$ | async | number: "1.0" }} ฿
   </div>
   <div class="_select-product-list_reset-container">
+    <a
+      #downloadEl
+      *ngIf="receiptImageSrc"
+      mat-mini-fab
+      [attr.href]="receiptImageSrc"
+      download="receipt.png"
+      color="primary"
+      aria-label="icon button with a download icon"
+    >
+      <mat-icon>download</mat-icon>
+    </a>
+    &nbsp;
     <button
       mat-mini-fab
       (click)="writeReceipt($event)"
       color="primary"
-      aria-label="icon button with a restart icon"
+      aria-label="icon button with a print receipt icon"
     >
       <mat-icon>print</mat-icon>
     </button>

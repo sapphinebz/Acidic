@@ -59,17 +59,17 @@ export class ReceiptCanvasComponent implements OnInit, OnDestroy {
     map((ref) => ref.nativeElement),
     shareReplay(1)
   );
-  onWriteText$ = new ReplaySubject<WriteTextOption>(1);
+  onWriteText$ = new Subject<WriteTextOption>();
 
-  onDrawQrCode$ = new ReplaySubject<void>(1);
+  onDrawQrCode$ = new Subject<void>();
 
-  onNewline$ = new ReplaySubject<{ fontSize: number }>(1);
+  onNewline$ = new Subject<{ fontSize: number }>();
 
   onDestroy$ = new AsyncSubject<void>();
 
-  onDownload$ = new ReplaySubject<void>(1);
+  onDownload$ = new Subject<void>();
 
-  onClearReceipt$ = new ReplaySubject<void>(1);
+  onClearReceipt$ = new Subject<void>();
 
   topOffset = 0;
   height$ = new ReplaySubject<number>(1);
@@ -175,6 +175,13 @@ export class ReceiptCanvasComponent implements OnInit, OnDestroy {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       })
     );
+  }
+
+  clearCanvas() {
+    const canvas = this.canvasEl!.nativeElement;
+    const ctx = canvas.getContext('2d')!;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.height = 0;
   }
 
   calNewline(topOffset: number) {

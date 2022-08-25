@@ -1,4 +1,11 @@
-import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SelectProductComponent } from '../select-product/select-product.component';
 import {
@@ -53,9 +60,14 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
   @ViewChild(ReceiptCanvasComponent, { read: ReceiptCanvasComponent })
   receiptComponent!: ReceiptCanvasComponent;
 
+  @ViewChild('downloadEl', { read: ElementRef })
+  downloadEl!: ElementRef<HTMLAnchorElement>;
+
   customerName: string = '';
 
   orderDate: Date | null = null;
+
+  receiptImageSrc = '';
 
   onDestroy$ = new AsyncSubject<void>();
   coldPressedProducts = COLD_PRESSED_PRODUCTS;
@@ -177,6 +189,10 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
 
     this.formArray.reset();
 
+    this.receiptComponent.clearCanvas();
+
+    this.receiptImageSrc = '';
+
     window.scrollTo({
       top: 0,
       left: 0,
@@ -269,5 +285,11 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     this.receiptComponent.canvasEl?.nativeElement.scrollIntoView({
       behavior: 'smooth',
     });
+
+    this.receiptImageSrc =
+      this.receiptComponent.canvasEl?.nativeElement.toDataURL('image/png') ??
+      '';
+
+    // this.downloadEl.nativeElement.click();
   }
 }
