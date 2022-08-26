@@ -4,11 +4,19 @@
 >
   <div class="_select-product_cold-pressed-button" (click)="addProduct($event)">
     <img alt="logo" [src]="product.src" style="width: 3rem" />
-    <div style="white-space: nowrap">{{ product.name }}</div>
+    <div style="white-space: nowrap">
+      <div>
+        {{ product.name }}
+      </div>
+      <div style="opacity: 0.5">
+        <span>฿ {{ sumPrice$ | async | number: "1.0" }}</span>
+      </div>
+    </div>
   </div>
-
-  <div>x {{ amount$ | async | number: "1.0" }}</div>
-  <div>= {{ sumPrice$ | async | number: "1.0" }} ฿</div>
+  <div style="justify-self: center; font-size: 1.125rem">
+    &nbsp;
+    <span>x {{ amount$ | async | number: "1.0" }}</span>
+  </div>
   <div>
     <button
       (click)="removeProduct($event)"
