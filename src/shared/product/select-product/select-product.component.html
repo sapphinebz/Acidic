@@ -9,7 +9,7 @@
         {{ product.name }}
       </div>
       <div style="opacity: 0.5">
-        <span>฿ {{ sumPrice$ | async | number: "1.0" }}</span>
+        <span>฿ {{ product.price | number: "1.0" }}</span>
       </div>
     </div>
   </div>
