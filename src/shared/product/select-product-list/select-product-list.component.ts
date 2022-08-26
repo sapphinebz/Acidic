@@ -226,7 +226,12 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
 
     this.receiptImageSrc = '';
 
-    this.ingredientSelections.reset();
+    if (this.ingredientSelections.value) {
+      this.ingredientSelections.value.forEach(
+        (selection) => (selection.checked = false)
+      );
+      this.ingredientSelections.setValue([...this.ingredientSelections.value]);
+    }
 
     window.scrollTo({
       top: 0,
