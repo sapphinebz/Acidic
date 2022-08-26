@@ -83,7 +83,7 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
 
   customerName: string = '';
 
-  orderDate: Date | null = null;
+  orderDate: Date | null = new Date();
 
   receiptImageSrc = '';
 
@@ -177,15 +177,7 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
-  ngOnInit() {
-    // this.ingredientSelections$
-    //   .pipe(takeUntil(this.onDestroy$))
-    //   .subscribe((checkList) => {
-    //     this.checkedIngredients = checkList.filter(
-    //       (item) => item.checked === true
-    //     );
-    //   });
-  }
+  ngOnInit() {}
 
   promotionBuy1SetFree1(products: (SelectProduct | null)[]): PromotionDiscount {
     let min!: number;
