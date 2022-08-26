@@ -46,6 +46,8 @@ import {
 import { FilterIngredientComponent } from '../filter-ingredient/filter-ingredient.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { HasIngredientPipe } from '../has-ingredient.pipe';
+import { ChipsIngredientsComponent } from '../chips-ingredients/chips-ingredients.component';
+import { FilterIngredientDialogData } from '../filter-ingredient/filter-ingredient';
 @Component({
   selector: 'app-select-product-list',
   templateUrl: './select-product-list.component.html',
@@ -66,6 +68,7 @@ import { HasIngredientPipe } from '../has-ingredient.pipe';
     FormsModule,
     MatDialogModule,
     MatChipsModule,
+    ChipsIngredientsComponent,
   ],
 })
 export class SelectProductListComponent implements OnInit, OnDestroy {
@@ -74,6 +77,9 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
 
   @ViewChild('downloadEl', { read: ElementRef })
   downloadEl!: ElementRef<HTMLAnchorElement>;
+
+  toolbarService = inject(ToolbarService);
+  dialog = inject(MatDialog);
 
   customerName: string = '';
 
@@ -84,15 +90,11 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
   onDestroy$ = new AsyncSubject<void>();
   coldPressedProducts = COLD_PRESSED_PRODUCTS.sort((a, b) => a.price - b.price);
 
-  ingredientSelections$ = new BehaviorSubject<IngredientSelection[]>(
+  ingredientSelections = new FormControl<IngredientSelection[]>(
     this.distinctIngredients(this.coldPressedProducts)
   );
 
-  checkedIngredients: IngredientSelection[] = [];
-
-  toolbarService = inject(ToolbarService);
-
-  filterIngredientForm = new FormControl(null);
+  ingredientChips: IngredientSelection[] = [];
 
   formArray = new FormArray<FormControl<SelectProduct | null>>(
     this.coldPressedProducts.map(() => new FormControl(null))
@@ -157,8 +159,6 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     shareReplay(1)
   );
 
-  dialog = inject(MatDialog);
-
   constructor() {
     this.formArray.valueChanges
       .pipe(takeUntil(this.onDestroy$))
@@ -178,13 +178,13 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.ingredientSelections$
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe((checkList) => {
-        this.checkedIngredients = checkList.filter(
-          (item) => item.checked === true
-        );
-      });
+    // this.ingredientSelections$
+    //   .pipe(takeUntil(this.onDestroy$))
+    //   .subscribe((checkList) => {
+    //     this.checkedIngredients = checkList.filter(
+    //       (item) => item.checked === true
+    //     );
+    //   });
   }
 
   promotionBuy1SetFree1(products: (SelectProduct | null)[]): PromotionDiscount {
@@ -332,8 +332,8 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(FilterIngredientComponent, {
       width: '250px',
       data: {
-        ingredients$: this.ingredientSelections$,
-      },
+        form: this.ingredientSelections,
+      } as FilterIngredientDialogData,
     });
   }
 
@@ -353,22 +353,5 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     return array.filter((value, index, self) => {
       return self.indexOf(value) === index;
     });
-  }
-
-  uncheckIngredient(item: IngredientSelection) {
-    const ingredient = this.ingredientSelections$.value.find(
-      (i) => i.name === item.name
-    );
-    if (ingredient) {
-      ingredient.checked = false;
-      this.ingredientSelections$.next(this.ingredientSelections$.value);
-    }
-  }
-
-  clearIngredientSelection() {
-    this.ingredientSelections$.value.forEach(
-      (ingre) => (ingre.checked = false)
-    );
-    this.ingredientSelections$.next(this.ingredientSelections$.value);
   }
 }

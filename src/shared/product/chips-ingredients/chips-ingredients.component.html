@@ -1,0 +1,17 @@
+<mat-chip-list aria-label="Ingredient selection">
+  <mat-chip
+    (click)="clearChips($event)"
+    [selected]="ingredientChips.length === 0"
+    >all
+  </mat-chip>
+  <mat-chip
+    *ngFor="let chipIngredient of ingredientChips"
+    [selectable]="false"
+    [selected]="true"
+    (click)="unchipIngredient($event, chipIngredient)"
+    >{{ chipIngredient.name }}
+    <button matChipRemove (click)="unchipIngredient($event, chipIngredient)">
+      <mat-icon>cancel</mat-icon>
+    </button>
+  </mat-chip>
+</mat-chip-list>

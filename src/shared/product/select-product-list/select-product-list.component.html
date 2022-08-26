@@ -42,7 +42,11 @@
     >
       <mat-icon>filter_alt_off</mat-icon>
     </button>
-    <mat-chip-list aria-label="Ingredient selection">
+    <app-chips-ingredients
+      (onChipsIngredients)="ingredientChips = $event"
+      [formControl]="ingredientSelections"
+    ></app-chips-ingredients>
+    <!-- <mat-chip-list aria-label="Ingredient selection">
       <mat-chip
         (click)="clearIngredientSelection()"
         [selected]="checkedIngredients.length === 0"
@@ -56,12 +60,12 @@
           <mat-icon>cancel</mat-icon>
         </button>
       </mat-chip>
-    </mat-chip-list>
+    </mat-chip-list> -->
   </div>
 
   <app-select-product
     *ngFor="let product of coldPressedProducts; let index = index"
-    [highlight]="product | hasIngredient: checkedIngredients"
+    [highlight]="product | hasIngredient: ingredientChips"
     [product]="product"
     [formControl]="controls[index]"
   ></app-select-product>
