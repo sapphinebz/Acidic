@@ -261,7 +261,7 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
 
     receiptHeight = this.receiptComponent.calWriteNormalText(
       receiptHeight,
-      `subTotal: ฿${this.subTotal}`
+      `sub total: ฿${this.subTotal}`
     );
 
     receiptHeight = this.receiptComponent.calWriteNormalText(
@@ -289,7 +289,7 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     }
     if (this.orderDate) {
       this.receiptComponent.writeText(
-        `orderDate: ${this.orderDate?.toLocaleDateString('th-TH') ?? ''}`
+        `order date: ${this.orderDate?.toLocaleDateString('th-TH') ?? ''}`
       );
       this.receiptComponent.newline();
     }
@@ -302,7 +302,7 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.receiptComponent.writeText(`subTotal: ฿${this.subTotal}`);
+    this.receiptComponent.writeText(`sub total: ฿${this.subTotal}`);
 
     this.receiptComponent.writeText(`discount: ฿${this.discount}`);
 
