@@ -1,3 +1,9 @@
+._select-product-cold-pressed-button-hover {
+  background-color: var(--background-hover);
+  border-color: var(--border-color);
+  border-style: solid;
+  border-width: 0.2px;
+}
 ._select-product_cold-pressed-button {
   // width: min-content;
   display: flex;
@@ -6,13 +12,15 @@
   align-items: center;
   user-select: none;
   cursor: pointer;
+  background-color: #fff;
 
   &:hover {
-    background-color: var(--background-hover);
-    border-color: var(--border-color);
-    border-style: solid;
-    border-width: 0.2px;
+    @extend ._select-product-cold-pressed-button-hover;
   }
+}
+
+._select-product_search-icon {
+  color: white;
 }
 
 ._select-product_product-select-row {

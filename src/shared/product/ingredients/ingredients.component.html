@@ -1,0 +1,14 @@
+<section>
+  <h3>
+    <strong>{{ product.name }}'s</strong>
+    Ingredients
+  </h3>
+
+  <div *ngFor="let ingredient of product.ingredients">
+    {{ ingredient }}
+  </div>
+</section>
+<br />
+<div>
+  <button mat-flat-button color="primary" (click)="close()">Close</button>
+</div>

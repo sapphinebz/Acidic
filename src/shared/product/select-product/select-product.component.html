@@ -2,8 +2,20 @@
   class="_select-product_product-select-row"
   [class._select-product_highlight]="highlight"
 >
-  <div class="_select-product_cold-pressed-button" (click)="addProduct($event)">
-    <img alt="logo" [src]="product.src" style="width: 3rem" />
+  <div
+    class="_select-product_cold-pressed-button"
+    #productEl
+    (click)="addProduct($event)"
+  >
+    <mat-icon class="_select-product_search-icon" data-search-icon
+      >search</mat-icon
+    >
+    <img
+      alt="logo"
+      [src]="product.src"
+      style="width: 3rem; user-select: none"
+      (mousedown)="$event.preventDefault()"
+    />
     <div style="white-space: nowrap">
       <div>
         {{ product.name }}

@@ -1,22 +1,48 @@
-import { Component, forwardRef, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  forwardRef,
+  inject,
+  Input,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { map, takeUntil, debounceTime } from 'rxjs/operators';
+import {
+  map,
+  takeUntil,
+  debounceTime,
+  exhaustMap,
+  tap,
+  switchMap,
+  observeOn,
+} from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import {
+  animationFrameScheduler,
   AsyncSubject,
   BehaviorSubject,
   combineLatest,
+  fromEvent,
+  merge,
   ReplaySubject,
+  timer,
 } from 'rxjs';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { ColdPressed, SelectProduct } from './select-product';
+import { IngredientsComponent } from '../ingredients/ingredients.component';
 
 @Component({
   selector: 'app-select-product',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
   templateUrl: './select-product.component.html',
   styleUrls: ['./select-product.component.scss'],
   providers: [
@@ -28,13 +54,19 @@ import { ColdPressed, SelectProduct } from './select-product';
   ],
 })
 export class SelectProductComponent
-  implements OnInit, OnDestroy, ControlValueAccessor
+  implements OnInit, OnDestroy, AfterViewInit, ControlValueAccessor
 {
+  @ViewChild('productEl', { read: ElementRef })
+  productEl!: ElementRef<HTMLDivElement>;
   @Input() product!: ColdPressed;
   @Input() highlight = false;
+  dialog = inject(MatDialog);
   amount$ = new BehaviorSubject<number>(0);
   onDestroy$ = new AsyncSubject<void>();
   sumPrice$ = new ReplaySubject<number>(1);
+
+  cd = inject(ChangeDetectorRef);
+  zone = inject(NgZone);
 
   constructor() {}
 
@@ -52,6 +84,98 @@ export class SelectProductComponent
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  ngAfterViewInit(): void {
+    // hover and slide
+    const productElement = this.productEl.nativeElement;
+    const searchIconElement =
+      productElement.querySelector<HTMLElement>('[data-search-icon]')!;
+
+    searchIconElement.style.position = 'absolute';
+    searchIconElement.style.opacity = '0';
+    this.zone.runOutsideAngular(() => {
+      const mousedown$ = fromEvent<MouseEvent>(
+        productElement,
+        'mousedown'
+      ).pipe(map((event) => ({ x: event.x })));
+      const touchstart$ = fromEvent<TouchEvent>(
+        productElement,
+        'touchstart'
+      ).pipe(map((event) => ({ x: event.touches[0].clientX })));
+      const down$ = merge(mousedown$, touchstart$);
+      const mouseup$ = fromEvent<MouseEvent>(productElement, 'mouseup');
+      const touchend$ = fromEvent<TouchEvent>(productElement, 'touchend');
+      const up$ = merge(mouseup$, touchend$);
+      const mousemove$ = fromEvent<MouseEvent>(
+        productElement,
+        'mousemove'
+      ).pipe(map((event) => ({ x: event.x })));
+      const touchmove$ = fromEvent<TouchEvent>(
+        productElement,
+        'touchmove'
+      ).pipe(map((event) => ({ x: event.touches[0].clientX })));
+      const move$ = merge(mousemove$, touchmove$);
+      down$
+        .pipe(
+          switchMap((downEvent) =>
+            timer(120).pipe(
+              map(() => downEvent),
+              takeUntil(merge(move$, up$))
+            )
+          ),
+          exhaustMap((downEvent) => {
+            const minRange = 0.2;
+            const maxRange = 32;
+            let range: number;
+            this.cd.detectChanges();
+
+            productElement.classList.add(
+              '_select-product-cold-pressed-button-hover'
+            );
+            return move$.pipe(
+              observeOn(animationFrameScheduler),
+              tap((upEvent) => {
+                const dragRange = upEvent.x - downEvent.x;
+                range = Math.min(maxRange, dragRange);
+
+                productElement.style.borderLeftWidth = `${range}px`;
+                searchIconElement.style.transform = `translateX(-${range}px)`;
+                searchIconElement.style.opacity = `${range / maxRange}`;
+              }),
+              takeUntil(
+                up$.pipe(
+                  tap(() => {
+                    if (
+                      range &&
+                      productElement.style.borderLeftWidth === `${maxRange}px`
+                    ) {
+                      this.zone.run(() => {
+                        this.openIngredientsDialog();
+                      });
+                    }
+                    productElement.style.borderWidth = `${minRange}px`;
+                    productElement.classList.remove(
+                      '_select-product-cold-pressed-button-hover'
+                    );
+                  })
+                )
+              )
+            );
+          }),
+          takeUntil(this.onDestroy$)
+        )
+        .subscribe();
+    });
+  }
+
+  openIngredientsDialog() {
+    const dialogRef = this.dialog.open(IngredientsComponent, {
+      width: '250px',
+      data: this.product,
+      enterAnimationDuration: '20ms',
+      exitAnimationDuration: '20ms',
+    });
   }
 
   writeValue(value: SelectProduct | null): void {
