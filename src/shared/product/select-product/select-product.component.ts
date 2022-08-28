@@ -21,10 +21,13 @@ import {
   tap,
   switchMap,
   observeOn,
+  takeWhile,
+  endWith,
 } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import {
+  animationFrames,
   animationFrameScheduler,
   AsyncSubject,
   BehaviorSubject,
@@ -118,12 +121,13 @@ export class SelectProductComponent
       const move$ = merge(mousemove$, touchmove$);
       down$
         .pipe(
-          switchMap((downEvent) =>
-            timer(120).pipe(
+          switchMap((downEvent) => {
+            const cancelHold$ = merge(move$, up$).pipe(tap(() => {}));
+            return timer(200).pipe(
               map(() => downEvent),
-              takeUntil(merge(move$, up$))
-            )
-          ),
+              takeUntil(cancelHold$)
+            );
+          }),
           exhaustMap((downEvent) => {
             const minRange = 0.2;
             const maxRange = 32;
@@ -138,10 +142,11 @@ export class SelectProductComponent
               tap((upEvent) => {
                 const dragRange = upEvent.x - downEvent.x;
                 range = Math.min(maxRange, dragRange);
+                const opacityRange = range / maxRange;
 
                 productElement.style.borderLeftWidth = `${range}px`;
                 searchIconElement.style.transform = `translateX(-${range}px)`;
-                searchIconElement.style.opacity = `${range / maxRange}`;
+                searchIconElement.style.opacity = `${opacityRange}`;
               }),
               takeUntil(
                 up$.pipe(
@@ -154,10 +159,36 @@ export class SelectProductComponent
                         this.openIngredientsDialog();
                       });
                     }
-                    productElement.style.borderWidth = `${minRange}px`;
-                    productElement.classList.remove(
-                      '_select-product-cold-pressed-button-hover'
-                    );
+
+                    if (range) {
+                      this.tween(200).subscribe({
+                        next: (t) => {
+                          productElement.style.borderLeftWidth = `${
+                            range - (range - minRange) * t
+                          }px`;
+
+                          searchIconElement.style.opacity = `${
+                            (range - range * t) / maxRange
+                          }`;
+
+                          searchIconElement.style.transform = `translateX(${
+                            range * t - range
+                          }px)`;
+                        },
+                        complete: () => {
+                          productElement.classList.remove(
+                            '_select-product-cold-pressed-button-hover'
+                          );
+                        },
+                      });
+                    } else {
+                      productElement.style.borderLeftWidth = `${minRange}px`;
+                      searchIconElement.style.transform = `translateX(${0}px)`;
+                      productElement.classList.remove(
+                        '_select-product-cold-pressed-button-hover'
+                      );
+                      searchIconElement.style.opacity = `0`;
+                    }
                   })
                 )
               )
@@ -167,6 +198,14 @@ export class SelectProductComponent
         )
         .subscribe();
     });
+  }
+
+  tween(duration: number) {
+    return animationFrames().pipe(
+      map((event) => event.elapsed / duration),
+      takeWhile((t) => t < 1),
+      endWith(1)
+    );
   }
 
   openIngredientsDialog() {
