@@ -107,17 +107,15 @@ export class SelectProductComponent
         'touchstart'
       ).pipe(map((event) => ({ x: event.touches[0].clientX })));
       const down$ = merge(mousedown$, touchstart$);
-      const mouseup$ = fromEvent<MouseEvent>(productElement, 'mouseup');
-      const touchend$ = fromEvent<TouchEvent>(productElement, 'touchend');
+      const mouseup$ = fromEvent<MouseEvent>(document, 'mouseup');
+      const touchend$ = fromEvent<TouchEvent>(document, 'touchend');
       const up$ = merge(mouseup$, touchend$);
-      const mousemove$ = fromEvent<MouseEvent>(
-        productElement,
-        'mousemove'
-      ).pipe(map((event) => ({ x: event.x })));
-      const touchmove$ = fromEvent<TouchEvent>(
-        productElement,
-        'touchmove'
-      ).pipe(map((event) => ({ x: event.touches[0].clientX })));
+      const mousemove$ = fromEvent<MouseEvent>(document, 'mousemove').pipe(
+        map((event) => ({ x: event.x }))
+      );
+      const touchmove$ = fromEvent<TouchEvent>(document, 'touchmove').pipe(
+        map((event) => ({ x: event.touches[0].clientX }))
+      );
       const move$ = merge(mousemove$, touchmove$);
       down$
         .pipe(

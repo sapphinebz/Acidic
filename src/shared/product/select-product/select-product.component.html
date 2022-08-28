@@ -25,10 +25,7 @@
       </div>
     </div>
   </div>
-  <div
-    [class._select-product_less-opacity]="(amount$ | async) === 0"
-    style="justify-self: center; font-size: 1.125rem"
-  >
+  <div style="justify-self: center; font-size: 1.125rem">
     &nbsp;
     <span>x {{ amount$ | async | number: "1.0" }}</span>
   </div>
