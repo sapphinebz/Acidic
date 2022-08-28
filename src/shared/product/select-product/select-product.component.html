@@ -20,12 +20,15 @@
       <div>
         {{ product.name }}
       </div>
-      <div style="opacity: 0.5">
+      <div class="_select-product_less-opacity">
         <span>฿ {{ product.price | number: "1.0" }}</span>
       </div>
     </div>
   </div>
-  <div style="justify-self: center; font-size: 1.125rem">
+  <div
+    [class._select-product_less-opacity]="(amount$ | async) === 0"
+    style="justify-self: center; font-size: 1.125rem"
+  >
     &nbsp;
     <span>x {{ amount$ | async | number: "1.0" }}</span>
   </div>
