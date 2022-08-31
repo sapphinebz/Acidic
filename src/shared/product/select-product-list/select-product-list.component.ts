@@ -277,6 +277,10 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     receiptHeight = this.receiptComponent.calDrawQrCode(receiptHeight);
     receiptHeight = this.receiptComponent.calWriteNormalText(
       receiptHeight,
+      'Mr. XXX XXX'
+    );
+    receiptHeight = this.receiptComponent.calWriteNormalText(
+      receiptHeight,
       'DD/MM/YYYY'
     );
 
@@ -309,6 +313,8 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     this.receiptComponent.writeText(`total: ฿${this.total}`);
 
     this.receiptComponent.drawQrCode();
+
+    this.receiptComponent.writeText(`น.ส. กิรณา สมุทรสุนทร`);
 
     this.receiptComponent.writeReceiptDate();
 
