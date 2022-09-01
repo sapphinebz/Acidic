@@ -29,7 +29,7 @@ import {
 } from '../select-product/select-product';
 import { IngredientSelection, PromotionDiscount } from './select-product-list';
 import { ToolbarService } from 'src/shared/toolbar/toolbar.service';
-import { AsyncSubject, BehaviorSubject, Subject } from 'rxjs';
+import { AsyncSubject, BehaviorSubject, Observable, Subject } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -118,15 +118,17 @@ export class SelectProductListComponent implements OnInit, OnDestroy {
     shareReplay(1)
   );
 
-  promotionDiscount$ = this.formArray.valueChanges.pipe(
-    debounceTime(0),
-    map((products) => {
-      return [this.promotionBuy1SetFree1(products)].filter(
-        (promotion) => promotion.discount > 0
-      );
-    }),
-    shareReplay(1)
-  );
+  promotionDiscount$: Observable<PromotionDiscount[]> =
+    this.formArray.valueChanges.pipe(
+      debounceTime(0),
+      map((products) => {
+        // return [this.promotionBuy1SetFree1(products)].filter(
+        //   (promotion) => promotion.discount > 0
+        // );
+        return [] as any[];
+      }),
+      shareReplay(1)
+    );
 
   promotionNames$ = this.promotionDiscount$.pipe(
     map((promotions) => {
