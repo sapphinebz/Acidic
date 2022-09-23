@@ -14,10 +14,40 @@ export interface SelectProduct {
 
 export const COLD_PRESSED_PRODUCTS: ColdPressed[] = [
   {
+    name: 'Celery',
+    src: 'assets/images/acidic_products/sm/sm_celery.png',
+    price: 59,
+    ingredients: ['Celery'],
+  },
+  {
+    name: 'Green Apple',
+    src: 'assets/images/acidic_products/sm/sm_green_apple.png',
+    price: 59,
+    ingredients: ['Green Apple'],
+  },
+  {
+    name: 'Carrot',
+    src: 'assets/images/acidic_products/sm/sm_carrot.png',
+    price: 59,
+    ingredients: ['Carrot'],
+  },
+  {
     name: 'Summer Root',
     src: 'assets/images/acidic_products/sm/SummerRoot.png',
     price: 69,
     ingredients: ['Pineapple', 'Guava', 'Beetroot', 'Carrot', 'Passion Fruit'],
+  },
+  {
+    name: 'Guava',
+    src: 'assets/images/acidic_products/sm/sm_guava.png',
+    price: 69,
+    ingredients: ['Guava'],
+  },
+  {
+    name: 'Carrot Passion Fruit',
+    src: 'assets/images/acidic_products/sm/sm_carrot_passion.png',
+    price: 69,
+    ingredients: ['Carrot', 'Passion Fruit'],
   },
   {
     name: 'Duo Green',
